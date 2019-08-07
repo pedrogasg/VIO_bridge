@@ -29,10 +29,26 @@ PX4_Realsense_Bridge::~PX4_Realsense_Bridge() { delete tf_listener_; }
 
 void PX4_Realsense_Bridge::odomCallback(const nav_msgs::Odometry& msg) {
 
+	if(!world_link_established_){
+		tf::StampedTransform transform_px4, transform_cam;
+		tf_listener_->lookupTransform("local_origin", "camera_downward", ros::Time(0), transform_px4);
+		tf_listener_->lookupTransform("camera_pose_frame", "camera_odom_frame", ros::Time(0), transform_cam);
+
+		//publish world link transform
+		static tf2_ros::StaticTransformBroadcaster br;
+		geometry_msgs::TransformStamped tf_msg;
+		//tf::Transform transform_world = transform_px4.serialize(transform_cam);
+		transform_cam.frame_id_ = "camera_downward";
+		transform_cam.child_frame_id_ = "camera_odom_frame";
+		transformStampedTFToMsg(transform_cam, tf_msg);
+		br.sendTransform(tf_msg);
+		world_link_established_ = true;
+	}
+
   // publish odometry msg
   nav_msgs::Odometry output = msg;
-  output.header.frame_id = "local_origin";
-  output.child_frame_id = "camera_downward";
+  //output.header.frame_id = "local_origin";
+  //output.child_frame_id = "camera_downward";
   mavros_odom_pub_.publish(output);
 
   last_system_status_ = system_status_;

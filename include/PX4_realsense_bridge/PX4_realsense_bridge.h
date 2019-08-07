@@ -5,6 +5,7 @@
 #include <mavros_msgs/CompanionProcessStatus.h>
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
+#include <tf2_ros/static_transform_broadcaster.h>
 #include <tf/transform_listener.h>
 
 namespace bridge {
@@ -42,6 +43,8 @@ class PX4_Realsense_Bridge {
 
   MAV_STATE system_status_{MAV_STATE::MAV_STATE_UNINIT};
   MAV_STATE last_system_status_{MAV_STATE::MAV_STATE_UNINIT};
+
+  bool world_link_established_ = false;
 
   void odomCallback(const nav_msgs::Odometry& msg);
 
