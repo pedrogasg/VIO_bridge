@@ -12,13 +12,11 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   dynamic_reconfigure
   tf
-  pcl_ros
   mavros
   mavros_extras
   mavros_msgs
   mavlink
 )
-find_package(PCL 1.7 REQUIRED)
 
 
 
